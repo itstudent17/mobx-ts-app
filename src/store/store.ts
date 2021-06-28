@@ -22,7 +22,6 @@ class Store {
 
     try {
       const response: AxiosResponse = await axios.get<User[]>(url);
-      console.log("data in fetchUsers", response);
       runInAction(() => {
         this.users = response.data;
         this.state = "done";
