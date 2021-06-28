@@ -1,21 +1,36 @@
 import "./App.css";
 import { useEffect } from "react";
 import store from "./store/store";
-import Header from "./components/Header";
+import ToggleButton from "./components/ToggleButton";
 import SearchBar from "./components/SearchBar";
 import CardList from "./components/CardList";
 import { observer } from "mobx-react-lite";
 import Message from "./components/Message";
 import { baseUrl } from "./constants";
+import { BrowserRouter as Router, Route } from "react-router-dom";
+import TableComponent from "./components/TableComponent";
 
-const App: React.FC = observer(() => {
+const TodosComponent = observer(() => {
+  useEffect(() => {
+    store.fetchUsers(baseUrl);
+  }, []);
+
+  return (
+    <div className={"container"}>
+      <ToggleButton path={"/"} text={"Back to cards of users"} />
+      <TableComponent />
+    </div>
+  );
+});
+
+const UsersComponent = observer(() => {
   useEffect(() => {
     store.fetchUsers(baseUrl);
   }, []);
 
   return (
     <div className="container">
-      <Header />
+      <ToggleButton path={"/todos"} text={"View table of users"} />
       <SearchBar />
       {store.state === "pending" && <Message text={"Still loading..."} />}
       {store.state === "error" && (
@@ -31,6 +46,15 @@ const App: React.FC = observer(() => {
         )
       ) : null}
     </div>
+  );
+});
+
+const App: React.FC = observer(() => {
+  return (
+    <Router>
+      <Route path="/" exact render={() => <UsersComponent />} />
+      <Route path="/todos" component={TodosComponent} />
+    </Router>
   );
 });
 

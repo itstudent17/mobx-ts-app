@@ -7,8 +7,7 @@ const SearchBar: React.FC = observer(() => (
       type="text"
       value={store.query}
       placeholder={"Search users in {JSON} Placeholder"}
-      onChange={(event) => {
-        console.log("onChange", event.target.value);
+      onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
         store.setQuery(event.target.value);
       }}
       autoFocus
