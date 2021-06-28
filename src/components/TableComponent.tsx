@@ -26,7 +26,7 @@ const TableComponent: React.FC = observer(() => {
         <TableHead>
           <TableRow>
             {headings.map((heading: string, ind: number) => (
-              <TableCell align={ind > 0 ? "right" : undefined}>
+              <TableCell key={heading} align={ind > 0 ? "right" : undefined}>
                 {heading}
               </TableCell>
             ))}
