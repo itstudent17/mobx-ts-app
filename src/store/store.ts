@@ -1,15 +1,37 @@
-import { makeAutoObservable } from "mobx";
+import { runInAction, makeAutoObservable } from "mobx";
+import axios, { AxiosResponse } from "axios";
+import { baseUrl } from "../constants";
 
 class Store {
-  users = [];
+  users: Array<User> = [];
+  state: string = "pending";
+  query: string = "";
+
   constructor() {
     makeAutoObservable(this);
-    fetch("https://jsonplaceholder.typicode.com/users")
-      .then((response) => response.json())
-      .then((data) => {
-        console.log("fetched users in constructor", data);
-        this.users = data;
+  }
+
+  setQuery(text: string) {
+    this.query = text;
+    const url = text ? `${baseUrl}?name_like=${text}` : baseUrl;
+    this.fetchUsers(url);
+  }
+
+  async fetchUsers(url: string) {
+    this.state = "pending";
+
+    try {
+      const response: AxiosResponse = await axios.get<User[]>(url);
+      console.log("data in fetchUsers", response);
+      runInAction(() => {
+        this.users = response.data;
+        this.state = "done";
       });
+    } catch (e) {
+      runInAction(() => {
+        this.state = "error";
+      });
+    }
   }
 }
 
